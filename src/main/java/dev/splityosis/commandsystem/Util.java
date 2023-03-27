@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Util {
+ public class Util {
 
     public static void sendMessage(CommandSender to, String message){
         to.sendMessage(colorize(message));

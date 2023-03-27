@@ -71,4 +71,12 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+
+        </snapshotRepository>
+    </distributionManagement>
 </project>
