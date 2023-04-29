@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
@@ -19,6 +20,8 @@ public class SYSCommandBranch {
     private Map<String, SYSCommandBranch> innerBranches = new HashMap<>();
     private Map<String, SYSCommand> innerCommands = new HashMap<>();
     private List<String> tabComplete = new ArrayList<>();
+    private CommandExecutorPlayer commandExecutorPlayer;
+    private CommandExecutorSender commandExecutorSender;
 
     public SYSCommandBranch(String... names) {
         this.name = names[0].toLowerCase();
@@ -77,6 +80,16 @@ public class SYSCommandBranch {
         return runBranch(this, sender, args);
     }
 
+    public SYSCommandBranch baseExecutes(CommandExecutorSender executor){
+        commandExecutorSender = executor;
+        return this;
+    }
+
+    public SYSCommandBranch baseExecutesPlayer(CommandExecutorPlayer executor){
+        commandExecutorPlayer = executor;
+        return this;
+    }
+
     public void registerCommandBranch(JavaPlugin plugin){
         SYSCommandBranch instance = this;
         try {
@@ -123,12 +136,6 @@ public class SYSCommandBranch {
     }
 
     public boolean runBranch(SYSCommandBranch branch, CommandSender sender, String[] args){
-        if (args.length == 0){
-            if (branch.unknownCommandMessage != null)
-                Util.sendMessage(sender, branch.unknownCommandMessage);
-            return false;
-        }
-
         if (branch.conditions != null){
             for (SYSCondition condition : branch.getConditions()) {
                 if (!condition.isValid(sender)){
@@ -136,6 +143,19 @@ public class SYSCommandBranch {
                     return false;
                 }
             }
+        }
+
+        if (args.length == 0){
+            if (sender instanceof Player && branch.commandExecutorPlayer != null) {
+                branch.commandExecutorPlayer.executes((Player) sender, args);
+                return true;
+            }
+            if (branch.commandExecutorSender != null) {
+                branch.commandExecutorSender.executes(sender, args);
+                return true;
+            }
+            else Util.sendMessage(sender, "&cOnly players can use this command");
+            return false;
         }
 
         if (branch.innerCommands.containsKey(args[0].toLowerCase())){

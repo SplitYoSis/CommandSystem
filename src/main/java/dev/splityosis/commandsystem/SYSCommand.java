@@ -123,13 +123,10 @@ public class SYSCommand {
     }
 
     public List<String> tabCompleter(CommandSender sender, String[] args){
-        if (!sender.hasPermission(permission)) return new ArrayList<>();
+        if (permission != null && !sender.hasPermission(permission)) return new ArrayList<>();
         if (args.length > arguments.length) return new ArrayList<>();
         SYSArgument arg = arguments[args.length-1];
-        if (arg instanceof SYSTabCompleter){
-            return ((SYSTabCompleter) arg).onTabComplete(sender, this, args[args.length-1]);
-        }
-        return new ArrayList<>();
+            return arg.tabComplete(sender, this, args[args.length-1]);
     }
 
     public void registerToBranch(SYSCommandBranch branch){
