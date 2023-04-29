@@ -1,12 +1,16 @@
 package dev.splityosis.commandsystem.arguments;
 
 import dev.splityosis.commandsystem.SYSArgument;
+import dev.splityosis.commandsystem.SYSCommand;
+import dev.splityosis.commandsystem.SYSTabCompleter;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class BooleanArgument extends SYSArgument {
+public class BooleanArgument extends SYSArgument implements SYSTabCompleter {
 
     @Override
     public boolean isValid(String input) {
@@ -16,5 +20,10 @@ public class BooleanArgument extends SYSArgument {
     @Override
     public List<String> getInvalidInputMessage(String input) {
         return Arrays.asList(ChatColor.RED + "Invalid input at '"+input+"', Please provide a true/false value.");
+    }
+
+    @Override
+    public @NonNull List<String> onTabComplete(CommandSender sender, SYSCommand command, String input) {
+        return Arrays.asList("True", "False");
     }
 }

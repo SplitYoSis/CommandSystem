@@ -103,6 +103,12 @@ public class SYSCommand {
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
             BukkitCommand bcmd = new BukkitCommand(name, "", "", aliases) {
+
+                @Override
+                public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+                    return tabCompleter(sender, args);
+                }
+
                 @Override
                 public boolean execute(CommandSender sender, String commandLabel, String[] args) {
                     return runCommand(sender, args);
@@ -114,6 +120,16 @@ public class SYSCommand {
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> tabCompleter(CommandSender sender, String[] args){
+        if (!sender.hasPermission(permission)) return new ArrayList<>();
+        if (args.length > arguments.length) return new ArrayList<>();
+        SYSArgument arg = arguments[args.length-1];
+        if (arg instanceof SYSTabCompleter){
+            return ((SYSTabCompleter) arg).onTabComplete(sender, this, args[args.length-1]);
+        }
+        return new ArrayList<>();
     }
 
     public void registerToBranch(SYSCommandBranch branch){

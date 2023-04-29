@@ -95,11 +95,18 @@ public class SYSCommandBranch {
                     SYSCommandBranch branch = instance;
                     if (args.length > 1) {
                         for (int i = 0; i < args.length-1; i++) {
-                            if (branch == null) return new ArrayList<>();
-                            branch = branch.getInnerBranches().get(args[0].toLowerCase());
+                            SYSCommandBranch currentBranch = branch.getInnerBranches().get(args[i].toLowerCase());
+                            if (currentBranch != null) {
+                                branch = currentBranch;
+                                continue;
+                            }
+
+                            SYSCommand currentCommand = branch.innerCommands.get(args[i].toLowerCase());
+                            if (currentCommand != null){
+                                return currentCommand.tabCompleter(sender, Arrays.copyOfRange(args, i+1, args.length));
+                            }
                         }
                     }
-                    if (branch == null) return new ArrayList<>();
                     return branch.tabComplete;
                 }
             };

@@ -76,7 +76,6 @@
         <snapshotRepository>
             <id>central</id>
             <name>Maven Central</name>
-
         </snapshotRepository>
     </distributionManagement>
 </project>
