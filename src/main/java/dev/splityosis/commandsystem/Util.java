@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
  public class Util {
 
-    public static void sendMessage(CommandSender to, String message){
+    protected static void sendMessage(CommandSender to, String message){
         to.sendMessage(colorize(message));
     }
 

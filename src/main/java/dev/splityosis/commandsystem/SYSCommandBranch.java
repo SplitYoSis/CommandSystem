@@ -154,7 +154,11 @@ public class SYSCommandBranch {
                 branch.commandExecutorSender.executes(sender, args);
                 return true;
             }
-            else Util.sendMessage(sender, "&cOnly players can use this command");
+            else {
+                if (branch.commandExecutorPlayer != null)
+                    Util.sendMessage(sender, "&cOnly players can use this command");
+                else Util.sendMessage(sender, unknownCommandMessage);
+            }
             return false;
         }
 

@@ -124,7 +124,7 @@ public class SYSCommand {
 
     public List<String> tabCompleter(CommandSender sender, String[] args){
         if (permission != null && !sender.hasPermission(permission)) return new ArrayList<>();
-        if (args.length > arguments.length) return new ArrayList<>();
+        if (arguments == null || args.length > arguments.length) return new ArrayList<>();
         SYSArgument arg = arguments[args.length-1];
             return arg.tabComplete(sender, this, args[args.length-1]);
     }
