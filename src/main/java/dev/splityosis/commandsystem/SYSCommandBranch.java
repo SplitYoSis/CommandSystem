@@ -15,11 +15,10 @@ public class SYSCommandBranch {
     private String name;
     private List<String> aliases = new ArrayList<>();
     private String permission = "";
-    private List<String> unknownCommandMessage;
+    private List<String> unknownCommandMessage = Arrays.asList("&cUnknown sub-command.");
     private SYSCondition[] conditions;
     private Map<String, SYSCommandBranch> innerBranches = new HashMap<>();
     private Map<String, SYSCommand> innerCommands = new HashMap<>();
-    private List<String> tabComplete = new ArrayList<>();
     private CommandExecutorPlayer commandExecutorPlayer;
     private CommandExecutorSender commandExecutorSender;
 
@@ -31,7 +30,6 @@ public class SYSCommandBranch {
 
     public SYSCommandBranch addBranch(SYSCommandBranch commandBranch){
         innerBranches.put(commandBranch.name, commandBranch);
-        tabComplete.add(commandBranch.name);
         for (String alias : commandBranch.aliases)
             innerBranches.put(alias, commandBranch);
         return this;
@@ -39,7 +37,6 @@ public class SYSCommandBranch {
 
     public SYSCommandBranch addCommand(SYSCommand command){
         innerCommands.put(command.getName(), command);
-        tabComplete.add(command.getName());
         for (String alias : command.getAliases())
             innerCommands.put(alias, command);
         return this;
@@ -120,7 +117,22 @@ public class SYSCommandBranch {
                             }
                         }
                     }
-                    return branch.tabComplete;
+
+                    String input = args[args.length-1];
+                    List<String> subCommands = new ArrayList<>();
+                    for (SYSCommandBranch value : branch.getInnerBranches().values()) {
+                        if (subCommands.contains(value.getName())) continue;
+                        if (value.getName().toLowerCase().startsWith(input.toLowerCase()))
+                            subCommands.add(value.getName());
+                    }
+
+                    for (SYSCommand value : branch.getInnerCommands().values()) {
+                        if (subCommands.contains(value.getName())) continue;
+                        if (value.getName().toLowerCase().startsWith(input.toLowerCase()))
+                            subCommands.add(value.getName());
+                    }
+                    Collections.sort(subCommands);
+                    return subCommands;
                 }
             };
             if (permission != null)
@@ -184,5 +196,9 @@ public class SYSCommandBranch {
         if (branch.unknownCommandMessage != null)
             Util.sendMessage(sender, branch.unknownCommandMessage);
         return false;
+    }
+
+    public String getName() {
+        return name;
     }
 }

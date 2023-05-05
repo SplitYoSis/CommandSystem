@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
- public class Util {
+class Util {
 
-    protected static void sendMessage(CommandSender to, String message){
+    public static void sendMessage(CommandSender to, String message){
         to.sendMessage(colorize(message));
     }
 

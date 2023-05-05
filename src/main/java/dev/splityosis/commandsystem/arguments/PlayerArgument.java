@@ -29,7 +29,8 @@ public class PlayerArgument extends SYSArgument {
     public List<String> tabComplete(CommandSender sender, SYSCommand command, String input) {
         List<String> names = new ArrayList<>();
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            names.add(onlinePlayer.getName());
+            if (onlinePlayer.getName().toLowerCase().startsWith(input))
+                names.add(onlinePlayer.getName());
         }
         Collections.sort(names);
         return names;

@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +24,11 @@ public class BooleanArgument extends SYSArgument {
 
     @Override
     public @NonNull List<String> tabComplete(CommandSender sender, SYSCommand command, String input) {
-        return Arrays.asList("True", "False");
+        List<String> bools = new ArrayList<>();
+        if ("false".startsWith(input.toLowerCase()))
+            bools.add("False");
+        if ("true".startsWith(input.toLowerCase()))
+            bools.add("True");
+        return bools;
     }
 }
