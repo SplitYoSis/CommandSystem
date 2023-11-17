@@ -9,4 +9,5 @@ public class CommandSystem extends JavaPlugin {
 
     @Override
     public void onDisable() {}
+
 }

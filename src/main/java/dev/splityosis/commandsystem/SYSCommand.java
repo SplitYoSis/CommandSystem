@@ -1,6 +1,7 @@
 package dev.splityosis.commandsystem;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SYSCommand {
 
@@ -21,7 +23,7 @@ public class SYSCommand {
     private SYSCondition[] conditions;
     private CommandExecutorPlayer commandExecutorPlayer;
     private CommandExecutorSender commandExecutorSender;
-
+    private BukkitCommand bukkitCommand;
 
     public SYSCommand(String... names) {
         this.name = names[0].toLowerCase();
@@ -96,13 +98,17 @@ public class SYSCommand {
         return this;
     }
 
+    public BukkitCommand getBukkitCommand() {
+        return bukkitCommand;
+    }
+
     public void registerCommand(JavaPlugin plugin){
         try {
             final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            BukkitCommand bcmd = new BukkitCommand(name, "", "", aliases) {
+            bukkitCommand = new BukkitCommand(name, "", "", aliases) {
 
                 @Override
                 public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -115,9 +121,31 @@ public class SYSCommand {
                 }
             };
             if (permission != null)
-                bcmd.setPermission(permission);
-            commandMap.register(name, bcmd);
+                bukkitCommand.setPermission(permission);
+            commandMap.register(name, bukkitCommand);
         } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unregisterFromCommandMap() {
+        try {
+            // First, get the CommandMap from the Bukkit Server
+            final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            bukkitCommandMap.setAccessible(true);
+            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
+
+            // Now, get the knownCommands map from the CommandMap
+            final Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+            knownCommandsField.setAccessible(true);
+            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+
+            // Remove the command and its aliases from the map
+            bukkitCommand.unregister(commandMap);
+            knownCommands.remove(name);
+            for (String alias : aliases)
+                knownCommands.remove(alias);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
