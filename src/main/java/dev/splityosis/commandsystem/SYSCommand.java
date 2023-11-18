@@ -130,17 +130,12 @@ public class SYSCommand {
 
     public void unregisterFromCommandMap() {
         try {
-            // First, get the CommandMap from the Bukkit Server
             final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            // Now, get the knownCommands map from the CommandMap
-            final Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
-            knownCommandsField.setAccessible(true);
-            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+            Map<String, Command> knownCommands = Util.getKnownCommands(commandMap);
 
-            // Remove the command and its aliases from the map
             bukkitCommand.unregister(commandMap);
             knownCommands.remove(name);
             for (String alias : aliases)
