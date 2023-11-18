@@ -37,10 +37,24 @@ public class SYSCommandBranch {
         return this;
     }
 
+    public SYSCommandBranch removeBranch(SYSCommandBranch commandBranch){
+        innerBranches.remove(commandBranch.name);
+        for (String alias : commandBranch.aliases)
+            innerBranches.remove(alias);
+        return this;
+    }
+
     public SYSCommandBranch addCommand(SYSCommand command){
         innerCommands.put(command.getName(), command);
         for (String alias : command.getAliases())
             innerCommands.put(alias, command);
+        return this;
+    }
+
+    public SYSCommandBranch removeCommand(SYSCommand command){
+        innerCommands.remove(command.getName());
+        for (String alias : command.getAliases())
+            innerCommands.remove(alias);
         return this;
     }
 
