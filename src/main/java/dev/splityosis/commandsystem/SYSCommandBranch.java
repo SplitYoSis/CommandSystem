@@ -111,7 +111,8 @@ public class SYSCommandBranch {
 
             Map<String, Command> knownCommands = Util.getKnownCommands(commandMap);
 
-            bukkitCommand.unregister(commandMap);
+            if (bukkitCommand != null)
+                bukkitCommand.unregister(commandMap);
             knownCommands.remove(name);
             for (String alias : aliases)
                 knownCommands.remove(alias);
