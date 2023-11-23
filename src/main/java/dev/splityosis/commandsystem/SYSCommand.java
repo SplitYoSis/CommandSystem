@@ -136,7 +136,9 @@ public class SYSCommand {
 
             Map<String, Command> knownCommands = Util.getKnownCommands(commandMap);
 
-            bukkitCommand.unregister(commandMap);
+            if (bukkitCommand != null)
+                bukkitCommand.unregister(commandMap);
+
             knownCommands.remove(name);
             for (String alias : aliases)
                 knownCommands.remove(alias);
@@ -149,7 +151,7 @@ public class SYSCommand {
         if (permission != null && !sender.hasPermission(permission)) return new ArrayList<>();
         if (arguments == null || args.length > arguments.length) return new ArrayList<>();
         SYSArgument arg = arguments[args.length-1];
-            return arg.tabComplete(sender, this, args[args.length-1]);
+        return arg.tabComplete(sender, this, args[args.length-1]);
     }
 
     public void registerToBranch(SYSCommandBranch branch){
